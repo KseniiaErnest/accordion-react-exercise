@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./index.css";
-import { setSelectionRange } from "@testing-library/user-event/dist/utils";
 
 const faqs = [
   {
@@ -29,16 +28,21 @@ export default function App() {
 }
 
 function Accordion( {data} ) {
+  const [curOpen, setCurOpen] = useState(null);
+
   return <div className="accordion">
-    {data.map((el, index) => <AccordionItem title={el.title} text={el.text} num={index} key={el.title} />)}
+    {data.map((el, index) => <AccordionItem curOpen={curOpen} onOpen={setCurOpen} title={el.title} num={index} key={el.title} >{el.text}</AccordionItem>)}
+
+    <AccordionItem curOpen={curOpen} onOpen={setCurOpen} title='Test1' num={22} key='test 1'><p>some text text</p></AccordionItem>
   </div>;
 }
 
-function AccordionItem({num, title, text}) {
-  const [isOpen, setIsOpen] = useState(false);
+function AccordionItem({num, title, text, curOpen, onOpen, children}) {
+  const isOpen = num === curOpen;
+  
 
 const handleToggle = () => {
-  setIsOpen((isOpen) => !isOpen)
+  onOpen(isOpen ? null : num);
 }
 
 
@@ -46,6 +50,6 @@ return <div className={`item ${isOpen ? 'open' : ''}`} onClick={handleToggle}>
   <p className="number">{num < 9 ? `0${num + 1}` : num + 1}</p>
   <p className="title">{title}</p>
   <p className="icon">{isOpen ? '-' : '+'}</p>
-  {isOpen && <div className="content-box">{text}</div>}
+  {isOpen && <div className="content-box">{children}</div>}
 </div>
 }
